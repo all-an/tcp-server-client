@@ -12,6 +12,10 @@ public class Server implements Runnable {
 
     private ArrayList<ConnectionHandler> connections;
 
+    public Server(){
+        connections = new ArrayList<>();
+    }
+
     @Override
     public void run(){
         try {
@@ -23,6 +27,18 @@ public class Server implements Runnable {
             // TODO: handle
         }
 
+    }
+
+    public void broadcast(String message){
+        for (ConnectionHandler ch : connections){
+            if(ch != null){
+                ch.sendMessage(message);
+            }
+        }
+    }
+
+    public void shutdown(){
+        
     }
 
     class ConnectionHandler implements Runnable{
@@ -44,9 +60,32 @@ public class Server implements Runnable {
                 out.println("Please enter a nickname: ");
                 nickname = in.readLine();
                 System.out.println(nickname + " connected !");
+                broadcast(nickname + "joined the chat!");
+                String message;
+                while ((message = in.readLine()) != null ){
+                    if(message.startsWith("/nick")){
+                        String[] messageSplit = message.split( " ", 2);
+                        if(messageSplit.length == 2){
+                            broadcast(nickname + " renamed themselves to " + messageSplit[1]);
+                            System.out.println(nickname + " renamed themselves to " + messageSplit[1]);
+                            nickname = messageSplit[1];
+                            out.println("Successfully changed nickname to " + nickname);
+                        } else {
+                            out.println("No nickname provided!");
+                        }
+                    } else if (message.startsWith("/quit")) {
+                        //TODO: quit
+                    } else {
+                        broadcast(nickname + ": " + message);
+                    }
+                }
             }catch(IOException e){
                 //TODO: handle
             }
+        }
+
+        public void sendMessage(String message){
+            out.println(message);
         }
 
     }
