@@ -16,7 +16,7 @@
 $ Run the Server on Intellij than run the Clients in multiple cmd or terminal
 ```
 
-## Running method
+## Client Running method
 
 ```java
 public void run() {
